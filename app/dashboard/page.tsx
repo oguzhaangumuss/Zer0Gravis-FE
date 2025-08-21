@@ -214,23 +214,23 @@ function TransactionHistory() {
     { 
       id: 'oracle', 
       name: 'Oracle Data', 
-      count: statsData?.data?.oracleTransactions || transactions.filter(tx => tx.type.includes('Oracle') || tx.type.includes('Blob')).length 
+      count: statsData?.data?.oracleTransactions || transactions.filter((tx: any) => tx.type.includes('Oracle') || tx.type.includes('Blob')).length 
     },
     { 
       id: 'storage', 
       name: 'Storage', 
-      count: statsData?.data?.storageTransactions || transactions.filter(tx => tx.type.includes('Storage')).length 
+      count: statsData?.data?.storageTransactions || transactions.filter((tx: any) => tx.type.includes('Storage')).length 
     },
     { 
       id: 'compute', 
       name: 'AI Compute', 
-      count: statsData?.data?.computeTransactions || transactions.filter(tx => tx.type.includes('AI')).length 
+      count: statsData?.data?.computeTransactions || transactions.filter((tx: any) => tx.type.includes('AI')).length 
     }
   ];
 
   const filteredTransactions = selectedTxType === 'all' 
     ? transactions 
-    : transactions.filter(tx => {
+    : transactions.filter((tx: any) => {
         if (selectedTxType === 'oracle') return tx.type.includes('Oracle') || tx.type.includes('Blob');
         if (selectedTxType === 'storage') return tx.type.includes('Storage');
         if (selectedTxType === 'compute') return tx.type.includes('AI');
@@ -269,7 +269,7 @@ function TransactionHistory() {
           </div>
         ) : (
           <div className="divide-y divide-purple-100/50">
-            {filteredTransactions.map((tx) => (
+            {filteredTransactions.map((tx: any) => (
             <div key={tx.id} className="p-6 hover:bg-indigo-50/50 transition-colors">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
