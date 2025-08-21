@@ -1,18 +1,23 @@
 
 'use client';
 
+import { useRealtimeStats, useNetworkStats } from '../lib/hooks/useZeroGravis';
+
 export default function StatsSection() {
+  const realtimeStats = useRealtimeStats();
+  const networkStats = useNetworkStats();
+
   const stats = [
     {
-      value: "99.7%",
-      label: "Uptime Guarantee",
+      value: realtimeStats.isOnline ? "Online" : "Offline",
+      label: "Network Status",
       icon: "ri-shield-check-line",
       color: "from-green-400 to-emerald-500"
     },
     {
-      value: "5/8",
-      label: "APIs Live",
-      icon: "ri-rocket-line",
+      value: `${networkStats.oracleSourcesActive}/${networkStats.totalSources}`,
+      label: "Oracle Sources",
+      icon: "ri-rocket-line", 
       color: "from-indigo-400 to-blue-500"
     },
     {
@@ -22,10 +27,10 @@ export default function StatsSection() {
       color: "from-purple-400 to-pink-500"
     },
     {
-      value: "0",
-      label: "Mock Data",
-      icon: "ri-database-line",
-      color: "from-orange-400 to-red-500"
+      value: realtimeStats.ethPrice ? `$${realtimeStats.ethPrice?.toLocaleString()}` : "Loading...",
+      label: "ETH Price (Live)",
+      icon: "ri-coin-line",
+      color: "from-orange-400 to-yellow-500"
     }
   ];
 

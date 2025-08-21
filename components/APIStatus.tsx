@@ -1,21 +1,73 @@
 
 'use client';
 
+import { useHealth, useETHPrice, useBTCPrice, useWeatherData, useSpaceData, useChainStatus } from '../lib/hooks/useZeroGravis';
+
 export default function APIStatus() {
+  const { data: health, isLoading: healthLoading, error: healthError } = useHealth();
+  const { data: ethPrice, isLoading: ethLoading, error: ethError } = useETHPrice();
+  const { data: btcPrice, isLoading: btcLoading, error: btcError } = useBTCPrice();
+  const { data: weatherData, isLoading: weatherLoading, error: weatherError } = useWeatherData();
+  const { data: spaceData, isLoading: spaceLoading, error: spaceError } = useSpaceData();
+  const { data: chainStatus, isLoading: chainLoading, error: chainError } = useChainStatus();
+
+  const getAPIStatus = (data: any, loading: boolean, error: any) => {
+    if (loading) return { status: 'loading', responseTime: '---' };
+    if (error) return { status: 'error', responseTime: 'Error' };
+    if (data?.success) return { status: 'operational', responseTime: `${data.executionTime || 'N/A'}ms` };
+    if (data?.status === 'healthy') return { status: 'operational', responseTime: '< 50ms' };
+    return { status: 'maintenance', responseTime: '---' };
+  };
+
   const apis = [
-    { name: "Health Check API", status: "operational", endpoint: "/health", responseTime: "12ms" },
-    { name: "Oracle Chainlink", status: "operational", endpoint: "/oracle/chainlink", responseTime: "45ms" },
-    { name: "Oracle Weather", status: "operational", endpoint: "/oracle/weather", responseTime: "89ms" },
-    { name: "Oracle NASA", status: "operational", endpoint: "/oracle/nasa", responseTime: "156ms" },
-    { name: "0G Compute AI", status: "operational", endpoint: "/compute/ai", responseTime: "234ms" },
-    { name: "Data Aggregation", status: "maintenance", endpoint: "/aggregate", responseTime: "---" },
-    { name: "Consensus Engine", status: "maintenance", endpoint: "/consensus", responseTime: "---" },
-    { name: "Storage Interface", status: "maintenance", endpoint: "/storage", responseTime: "---" }
+    { 
+      name: "Health Check API", 
+      endpoint: "/health",
+      ...getAPIStatus(health, healthLoading, healthError)
+    },
+    { 
+      name: "Oracle ETH Price", 
+      endpoint: "/api/v1/oracle/collect (ETH)",
+      ...getAPIStatus(ethPrice, ethLoading, ethError)
+    },
+    { 
+      name: "Oracle BTC Price", 
+      endpoint: "/api/v1/oracle/collect (BTC)", 
+      ...getAPIStatus(btcPrice, btcLoading, btcError)
+    },
+    { 
+      name: "Oracle Weather", 
+      endpoint: "/api/v1/oracle/collect (Weather)",
+      ...getAPIStatus(weatherData, weatherLoading, weatherError)
+    },
+    { 
+      name: "Oracle NASA", 
+      endpoint: "/api/v1/oracle/collect (NASA)",
+      ...getAPIStatus(spaceData, spaceLoading, spaceError)
+    },
+    { 
+      name: "0G Chain Status", 
+      endpoint: "/api/v1/chain/status",
+      ...getAPIStatus(chainStatus, chainLoading, chainError)
+    },
+    { 
+      name: "Data Aggregation", 
+      endpoint: "/api/v1/oracle/aggregate", 
+      status: "operational", 
+      responseTime: "Real-time"
+    },
+    { 
+      name: "Blockchain Recording", 
+      endpoint: "/api/v1/storage/*", 
+      status: "operational", 
+      responseTime: "On-demand"
+    }
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'operational': return 'green';
+      case 'loading': return 'blue';
       case 'maintenance': return 'yellow';
       case 'error': return 'red';
       default: return 'gray';
@@ -23,6 +75,8 @@ export default function APIStatus() {
   };
 
   const operationalCount = apis.filter(api => api.status === 'operational').length;
+  const loadingCount = apis.filter(api => api.status === 'loading').length;
+  const errorCount = apis.filter(api => api.status === 'error').length;
 
   return (
     <section className="py-16 relative z-10">
@@ -31,15 +85,31 @@ export default function APIStatus() {
           <h2 className="text-4xl font-bold text-indigo-900 mb-6 bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
             API Status Dashboard
           </h2>
-          <div className="flex items-center justify-center space-x-6 mb-6">
+          <div className="flex items-center justify-center space-x-6 mb-6 flex-wrap gap-3">
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
               <span className="text-lg font-medium text-indigo-700">
-                {operationalCount}/8 APIs Operational
+                {operationalCount}/{apis.length} APIs Operational
               </span>
             </div>
+            {loadingCount > 0 && (
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 bg-blue-400 rounded-full animate-pulse shadow-lg shadow-blue-400/50"></div>
+                <span className="text-sm font-medium text-blue-600">
+                  {loadingCount} Loading
+                </span>
+              </div>
+            )}
+            {errorCount > 0 && (
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 bg-red-400 rounded-full animate-pulse shadow-lg shadow-red-400/50"></div>
+                <span className="text-sm font-medium text-red-600">
+                  {errorCount} Errors
+                </span>
+              </div>
+            )}
             <div className="text-sm text-indigo-600">
-              System Uptime: 99.7%
+              Real-time Monitoring
             </div>
           </div>
         </div>
@@ -67,10 +137,23 @@ export default function APIStatus() {
                       </div>
                       
                       <div className="flex items-center space-x-2">
-                        <div className={`w-2 h-2 bg-${statusColor}-400 rounded-full animate-pulse`}></div>
-                        <span className={`text-sm font-medium capitalize text-${statusColor}-600`}>
+                        <div className={`w-2 h-2 rounded-full animate-pulse ${
+                          statusColor === 'green' ? 'bg-green-400' :
+                          statusColor === 'blue' ? 'bg-blue-400' :
+                          statusColor === 'yellow' ? 'bg-yellow-400' :
+                          statusColor === 'red' ? 'bg-red-400' : 'bg-gray-400'
+                        }`}></div>
+                        <span className={`text-sm font-medium capitalize ${
+                          statusColor === 'green' ? 'text-green-600' :
+                          statusColor === 'blue' ? 'text-blue-600' :
+                          statusColor === 'yellow' ? 'text-yellow-600' :
+                          statusColor === 'red' ? 'text-red-600' : 'text-gray-600'
+                        }`}>
                           {api.status}
                         </span>
+                        {api.status === 'loading' && (
+                          <div className="w-4 h-4 border-2 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
+                        )}
                       </div>
                       
                       <div className="text-sm font-mono text-indigo-700">

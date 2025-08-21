@@ -1,7 +1,10 @@
 
 'use client';
 
+import { useRealtimeStats } from '../lib/hooks/useZeroGravis';
+
 export default function HeroSection() {
+  const realtimeStats = useRealtimeStats();
   return (
     <section className="relative py-32 overflow-hidden">
       <div className="container mx-auto px-6 text-center relative z-10">
@@ -12,10 +15,28 @@ export default function HeroSection() {
           <p className="text-2xl text-indigo-800 mb-6 font-light">
             Next-Generation Oracle Data Platform
           </p>
-          <p className="text-lg text-indigo-600 max-w-3xl mx-auto mb-12 leading-relaxed">
+          <p className="text-lg text-indigo-600 max-w-3xl mx-auto mb-8 leading-relaxed">
             Harness the power of 0G Network infrastructure to deliver real-time, decentralized Oracle data 
             with enterprise-grade reliability and AI-powered consensus mechanisms.
           </p>
+          
+          {/* Real-time Stats Display */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 max-w-2xl mx-auto mb-12 border border-purple-100/50 shadow-lg">
+            <div className="flex items-center justify-center space-x-8 text-sm">
+              <div className="flex items-center space-x-2">
+                <div className={`w-3 h-3 rounded-full animate-pulse ${realtimeStats.isOnline ? 'bg-green-400' : 'bg-red-400'}`}></div>
+                <span className="text-indigo-700 font-medium">
+                  {realtimeStats.isOnline ? 'Network Online' : 'Network Offline'}
+                </span>
+              </div>
+              <div className="text-indigo-600">
+                ETH: {realtimeStats.ethPrice ? `$${realtimeStats.ethPrice.toLocaleString()}` : 'Loading...'}
+              </div>
+              <div className="text-indigo-600">
+                Block: {realtimeStats.latestBlock?.toLocaleString() || 'N/A'}
+              </div>
+            </div>
+          </div>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
             <button className="px-10 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full hover:shadow-xl hover:shadow-purple-300/40 transition-all duration-300 transform hover:scale-105 font-semibold text-lg whitespace-nowrap cursor-pointer">

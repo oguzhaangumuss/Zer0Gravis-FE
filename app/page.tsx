@@ -7,6 +7,7 @@ import FeatureShowcase from '../components/FeatureShowcase';
 import DataSourcesSection from '../components/DataSourcesSection';
 import TechStackSection from '../components/TechStackSection';
 import StatsSection from '../components/StatsSection';
+import OracleVisualization from '../components/OracleVisualization';
 import CTASection from '../components/CTASection';
 import Footer from '../components/Footer';
 
@@ -24,6 +25,7 @@ export default function Home() {
       <HeroSection />
       <StatsSection />
       <FeatureShowcase />
+      <OracleVisualization />
       <DataSourcesSection />
       <TechStackSection />
       <CTASection />
