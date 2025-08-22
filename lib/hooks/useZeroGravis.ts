@@ -18,7 +18,7 @@ export const QUERY_KEYS = {
 export function useHealth() {
   return useQuery({
     queryKey: QUERY_KEYS.HEALTH,
-    queryFn: ZeroGravisAPI.getHealth,
+    queryFn: () => ZeroGravisAPI.getHealth(),
     refetchInterval: 30000, // Refetch every 30 seconds
     staleTime: 10000, // 10 seconds
   });
@@ -28,7 +28,7 @@ export function useHealth() {
 export function useETHPrice() {
   return useQuery({
     queryKey: QUERY_KEYS.ETH_PRICE,
-    queryFn: ZeroGravisAPI.getETHPrice,
+    queryFn: () => ZeroGravisAPI.getETHPrice(),
     refetchInterval: 15000, // Refetch every 15 seconds
     staleTime: 5000, // 5 seconds
     retry: 3,
@@ -38,7 +38,7 @@ export function useETHPrice() {
 export function useBTCPrice() {
   return useQuery({
     queryKey: QUERY_KEYS.BTC_PRICE,
-    queryFn: ZeroGravisAPI.getBTCPrice,
+    queryFn: () => ZeroGravisAPI.getBTCPrice(),
     refetchInterval: 15000, // Refetch every 15 seconds
     staleTime: 5000, // 5 seconds
     retry: 3,
@@ -72,7 +72,7 @@ export function useSpaceData(date?: string) {
 export function useChainStatus() {
   return useQuery({
     queryKey: QUERY_KEYS.CHAIN_STATUS,
-    queryFn: ZeroGravisAPI.getChainStatus,
+    queryFn: () => ZeroGravisAPI.getChainStatus(),
     refetchInterval: 20000, // Refetch every 20 seconds
     staleTime: 10000, // 10 seconds
     retry: 2,
@@ -83,7 +83,7 @@ export function useChainStatus() {
 export function useAllOracleData() {
   return useQuery({
     queryKey: QUERY_KEYS.ALL_ORACLE_DATA,
-    queryFn: ZeroGravisAPI.getAllOracleData,
+    queryFn: () => ZeroGravisAPI.getAllOracleData(),
     refetchInterval: 20000, // Refetch every 20 seconds
     staleTime: 10000, // 10 seconds
     retry: 2,
@@ -164,7 +164,7 @@ export function useRecentTransactions(limit: number = 10, type: string = 'all') 
 export function useTransactionStats() {
   return useQuery({
     queryKey: ['transactions', 'stats'],
-    queryFn: ZeroGravisAPI.getTransactionStats,
+    queryFn: () => ZeroGravisAPI.getTransactionStats(),
     refetchInterval: 60000, // Refetch every minute
     staleTime: 30000, // 30 seconds
     retry: 2,

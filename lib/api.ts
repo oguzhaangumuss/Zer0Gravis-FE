@@ -3,11 +3,11 @@
 import axios from 'axios';
 
 // API Configuration  
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000,
+  timeout: 60000, // Increased to 60 seconds for blockchain scanning
   headers: {
     'Content-Type': 'application/json',
   },

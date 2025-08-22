@@ -149,61 +149,8 @@ function TransactionHistory() {
   const { data: transactionData, isLoading: transactionsLoading } = useRecentTransactions(20, selectedTxType);
   const { data: statsData } = useTransactionStats();
 
-  // Use real transaction data or fallback to mock data
-  const transactions = transactionData?.data?.transactions || [
-    {
-      id: '1',
-      hash: '0xa1b2c3d4e5f67890123456789abcdef01234567890abcdef01234567890abcdef',
-      type: 'Oracle Data Recording',
-      status: 'confirmed',
-      timestamp: new Date(Date.now() - 300000).toISOString(), // 5 min ago
-      value: '0.001 ETH',
-      gasUsed: '21000',
-      blockNumber: chainStatus?.data?.block?.latest ? chainStatus.data.block.latest - 2 : 5317770,
-      from: '0xEA0017d462dDec5fB098AF885a867E40303E730E',
-      to: '0x857C0A28A8634614BB2C96039Cf4a20AFF709Aa9',
-      description: 'ETH/USD price data recorded to 0G DA layer'
-    },
-    {
-      id: '2', 
-      hash: '0xb2c3d4e5f67890123456789abcdef01234567890abcdef01234567890abcdef12',
-      type: 'Storage Upload',
-      status: 'confirmed',
-      timestamp: new Date(Date.now() - 600000).toISOString(), // 10 min ago
-      value: '0.002 ETH',
-      gasUsed: '45000',
-      blockNumber: chainStatus?.data?.block?.latest ? chainStatus.data.block.latest - 5 : 5317767,
-      from: '0xEA0017d462dDec5fB098AF885a867E40303E730E',
-      to: '0xbD75117F80b4E22698D0Cd7612d92BDb8eaff628',
-      description: 'Weather data stored on 0G Storage network'
-    },
-    {
-      id: '3',
-      hash: '0xc3d4e5f67890123456789abcdef01234567890abcdef01234567890abcdef1234',
-      type: 'AI Inference',
-      status: 'pending',
-      timestamp: new Date(Date.now() - 120000).toISOString(), // 2 min ago
-      value: '0.005 ETH',
-      gasUsed: '75000',
-      blockNumber: chainStatus?.data?.block?.latest ? chainStatus.data.block.latest - 1 : 5317771,
-      from: '0xEA0017d462dDec5fB098AF885a867E40303E730E',
-      to: '0x857C0A28A8634614BB2C96039Cf4a20AFF709Aa9',
-      description: 'AI model execution on 0G Compute network'
-    },
-    {
-      id: '4',
-      hash: '0xd4e5f67890123456789abcdef01234567890abcdef01234567890abcdef12345',
-      type: 'Blob Submission',
-      status: 'confirmed',
-      timestamp: new Date(Date.now() - 900000).toISOString(), // 15 min ago
-      value: '0.003 ETH',
-      gasUsed: '55000',
-      blockNumber: chainStatus?.data?.block?.latest ? chainStatus.data.block.latest - 8 : 5317764,
-      from: '0xEA0017d462dDec5fB098AF885a867E40303E730E',
-      to: '0x857C0A28A8634614BB2C96039Cf4a20AFF709Aa9',
-      description: 'NASA space data submitted to 0G DA layer'
-    }
-  ];
+  // Use only real transaction data from backend - NO MOCK DATA
+  const transactions = transactionData?.data?.transactions || [];
 
   const txTypes = [
     { 
@@ -318,9 +265,25 @@ function TransactionHistory() {
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-indigo-600 font-medium">From → To:</span>
-                  <span className="text-indigo-500 font-mono">
-                    {tx.from.slice(0, 8)}...{tx.from.slice(-6)} → {tx.to.slice(0, 8)}...{tx.to.slice(-6)}
-                  </span>
+                  <div className="text-indigo-500 font-mono flex items-center space-x-1">
+                    <a 
+                      href={`https://chainscan-galileo.0g.ai/address/${tx.from}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-indigo-700 hover:underline"
+                    >
+                      {tx.from.slice(0, 8)}...{tx.from.slice(-6)}
+                    </a>
+                    <span>→</span>
+                    <a 
+                      href={`https://chainscan-galileo.0g.ai/address/${tx.to}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-indigo-700 hover:underline"
+                    >
+                      {tx.to.slice(0, 8)}...{tx.to.slice(-6)}
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
