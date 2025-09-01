@@ -2,12 +2,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRealtimeStats, useChainStatus, useRecentTransactions, useTransactionStats } from '../../lib/hooks/useZeroGravis';
-import Header from '../../components/Header';
-import NetworkStatus from '../../components/NetworkStatus';
-import RealTimeData from '../../components/RealTimeData';
-import APIStatus from '../../components/APIStatus';
-import OracleVisualization from '../../components/OracleVisualization';
+import { useRealtimeStats, useChainStatus, useRecentTransactions, useTransactionStats } from '../../../lib/hooks/useZeroGravis';
+import Header from '../../../components/Header';
+import NetworkStatus from '../../../components/NetworkStatus';
+import RealTimeData from '../../../components/RealTimeData';
+import APIStatus from '../../../components/APIStatus';
+import OracleVisualization from '../../../components/OracleVisualization';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('overview');
