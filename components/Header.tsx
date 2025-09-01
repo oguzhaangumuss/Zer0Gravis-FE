@@ -33,7 +33,7 @@ export default function Header() {
               Technology
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400 to-purple-500 group-hover:w-full transition-all duration-300"></span>
             </a>
-            <Link href="/dashboard" className="text-indigo-700 hover:text-purple-700 transition-colors duration-300 relative group font-medium">
+            <Link href="/v1/dashboard" className="text-indigo-700 hover:text-purple-700 transition-colors duration-300 relative group font-medium">
               Dashboard
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400 to-purple-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
@@ -44,7 +44,7 @@ export default function Header() {
               <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
               <span className="text-sm font-medium text-green-600">Live</span>
             </div>
-            <Link href="/dashboard">
+            <Link href="/v1/dashboard">
               <button className="px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full hover:shadow-xl hover:shadow-purple-300/30 transition-all duration-300 whitespace-nowrap cursor-pointer transform hover:scale-105 font-semibold">
                 Get Started
               </button>

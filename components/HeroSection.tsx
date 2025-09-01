@@ -1,6 +1,7 @@
 
 'use client';
 
+import Link from 'next/link';
 import { useRealtimeStats } from '../lib/hooks/useZeroGravis';
 
 export default function HeroSection() {
@@ -39,9 +40,11 @@ export default function HeroSection() {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-            <button className="px-10 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full hover:shadow-xl hover:shadow-purple-300/40 transition-all duration-300 transform hover:scale-105 font-semibold text-lg whitespace-nowrap cursor-pointer">
-              Explore Live Data
-            </button>
+            <Link href="/v1/dashboard">
+              <button className="px-10 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full hover:shadow-xl hover:shadow-purple-300/40 transition-all duration-300 transform hover:scale-105 font-semibold text-lg whitespace-nowrap cursor-pointer">
+                Explore Live Data
+              </button>
+            </Link>
             <button className="px-10 py-4 bg-white/80 backdrop-blur-sm text-indigo-700 border-2 border-indigo-300 rounded-full hover:bg-indigo-50 hover:border-purple-400 transition-all duration-300 transform hover:scale-105 font-semibold text-lg whitespace-nowrap cursor-pointer">
               View Documentation
             </button>

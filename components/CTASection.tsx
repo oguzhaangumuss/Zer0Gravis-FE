@@ -17,7 +17,7 @@ export default function CTASection() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Link href="/dashboard">
+            <Link href="/v1/dashboard">
               <button className="px-10 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full hover:shadow-xl hover:shadow-purple-300/40 transition-all duration-300 transform hover:scale-105 font-semibold text-lg whitespace-nowrap cursor-pointer">
                 View Live Dashboard
               </button>
