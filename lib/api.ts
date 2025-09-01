@@ -191,6 +191,184 @@ export class ZeroGravisAPI {
     const response = await apiClient.get(`/api/v1/transactions/${hash}`);
     return response.data;
   }
+
+  // ========================================
+  // 0G STORAGE APIS - Real file/dataset storage
+  // ========================================
+  
+  static async uploadFile(file: File, fileName?: string) {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (fileName) formData.append('fileName', fileName);
+    
+    const response = await apiClient.post('/api/v1/storage/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 300000 // 5 minutes for large files
+    });
+    return response.data;
+  }
+
+  static async uploadData(data: any, fileName: string) {
+    const response = await apiClient.post('/api/v1/storage/upload-data', {
+      data,
+      fileName
+    });
+    return response.data;
+  }
+
+  static async downloadFile(rootHash: string, fileName?: string) {
+    const params = fileName ? `?fileName=${fileName}` : '';
+    const response = await apiClient.get(`/api/v1/storage/download/${rootHash}${params}`, {
+      responseType: 'blob'
+    });
+    return response;
+  }
+
+  static async getStorageData(rootHash: string) {
+    const response = await apiClient.get(`/api/v1/storage/data/${rootHash}`);
+    return response.data;
+  }
+
+  static async getStorageInfo() {
+    const response = await apiClient.get('/api/v1/storage/info');
+    return response.data;
+  }
+
+  static async getStorageStatus(rootHash: string) {
+    const response = await apiClient.get(`/api/v1/storage/status/${rootHash}`);
+    return response.data;
+  }
+
+  static async estimateStorageCost(fileSize: number) {
+    const response = await apiClient.post('/api/v1/storage/estimate-cost', { fileSize });
+    return response.data;
+  }
+
+  static async testStorageConnection() {
+    const response = await apiClient.get('/api/v1/storage/test');
+    return response.data;
+  }
+
+  // ========================================
+  // 0G COMPUTE APIS - AI inference and model training
+  // ========================================
+
+  static async submitInference(prompt: string, model?: string, maxTokens?: number, temperature?: number) {
+    const response = await apiClient.post('/api/v1/compute/inference', {
+      prompt,
+      model: model || 'llama-3.1-8b-instant',
+      maxTokens: maxTokens || 200,
+      temperature: temperature || 0.7
+    });
+    return response.data;
+  }
+
+  static async getJobInfo(jobId: string) {
+    const response = await apiClient.get(`/api/v1/compute/jobs/${jobId}`);
+    return response.data;
+  }
+
+  static async performOracleConsensus(oracleResponses: any[], consensusMethod: string, dataType: string) {
+    const response = await apiClient.post('/api/v1/compute/oracle-consensus', {
+      oracleResponses,
+      consensusMethod,
+      dataType
+    });
+    return response.data;
+  }
+
+  static async getAvailableModels() {
+    const response = await apiClient.get('/api/v1/compute/models');
+    return response.data;
+  }
+
+  static async getComputeNetworkStatus() {
+    const response = await apiClient.get('/api/v1/compute/status');
+    return response.data;
+  }
+
+  static async estimateComputeCost(model: string, maxTokens: number) {
+    const response = await apiClient.post('/api/v1/compute/estimate-cost', {
+      model,
+      maxTokens
+    });
+    return response.data;
+  }
+
+  static async testComputeNetwork() {
+    const response = await apiClient.get('/api/v1/compute/test');
+    return response.data;
+  }
+
+  // ========================================
+  // 0G DATA AVAILABILITY APIS - Scalable data access
+  // ========================================
+
+  static async publishDataToDA(data: any, metadata?: any) {
+    const response = await apiClient.post('/api/v1/da/publish-data', {
+      data,
+      metadata
+    });
+    return response.data;
+  }
+
+  static async retrieveDataFromDA(blobId: string) {
+    const response = await apiClient.get(`/api/v1/da/retrieve-data/${blobId}`);
+    return response.data;
+  }
+
+  static async getBlobInfo(blobId: string) {
+    const response = await apiClient.get(`/api/v1/da/blob-info/${blobId}`);
+    return response.data;
+  }
+
+  static async getDANetworkStatus() {
+    const response = await apiClient.get('/api/v1/da/status');
+    return response.data;
+  }
+
+  static async testDALayer() {
+    const response = await apiClient.post('/api/v1/da/test', {
+      testData: { message: 'Test blob data', timestamp: Date.now() }
+    });
+    return response.data;
+  }
+
+  // ========================================
+  // 0G CHAIN APIS - Fast EVM-compatible transactions
+  // ========================================
+
+  static async submitOracleData(oracleData: any, consensusValue: any, sources: string[]) {
+    const response = await apiClient.post('/api/v1/chain/submit-oracle-data', {
+      oracleData,
+      consensusValue,
+      sources
+    });
+    return response.data;
+  }
+
+  static async getWalletInfo() {
+    const response = await apiClient.get('/api/v1/chain/wallet');
+    return response.data;
+  }
+
+  static async estimateGas(data: any, toAddress?: string) {
+    const response = await apiClient.post('/api/v1/chain/estimate-gas', {
+      data,
+      to: toAddress
+    });
+    return response.data;
+  }
+
+  static async getNetworkInfo() {
+    const response = await apiClient.get('/api/v1/chain/network');
+    return response.data;
+  }
+
+  static async testChainConnection() {
+    const response = await apiClient.get('/api/v1/chain/test');
+    return response.data;
+  }
 }
 
 export default ZeroGravisAPI;

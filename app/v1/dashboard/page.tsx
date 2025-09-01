@@ -1,12 +1,12 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRealtimeStats, useChainStatus, useRecentTransactions, useTransactionStats } from '../../../lib/hooks/useZeroGravis';
+import { ZeroGravisAPI } from '../../../lib/api';
 import Header from '../../../components/Header';
 import NetworkStatus from '../../../components/NetworkStatus';
 import RealTimeData from '../../../components/RealTimeData';
-import APIStatus from '../../../components/APIStatus';
 import OracleVisualization from '../../../components/OracleVisualization';
 
 export default function Dashboard() {
@@ -16,10 +16,13 @@ export default function Dashboard() {
 
   const tabs = [
     { id: 'overview', name: 'Overview', icon: 'ri-dashboard-line' },
-    { id: 'transactions', name: 'Transactions', icon: 'ri-exchange-line' },
+    { id: 'storage', name: '0G Storage', icon: 'ri-database-2-line', color: 'from-blue-500 to-cyan-600' },
+    { id: 'compute', name: '0G Compute', icon: 'ri-brain-line', color: 'from-purple-500 to-pink-600' },
+    { id: 'da', name: '0G Data Availability', icon: 'ri-cloud-line', color: 'from-green-500 to-emerald-600' },
+    { id: 'chain', name: '0G Chain', icon: 'ri-links-line', color: 'from-orange-500 to-red-600' },
     { id: 'oracles', name: 'Oracle Data', icon: 'ri-database-line' },
-    { id: 'network', name: 'Network Status', icon: 'ri-wifi-line' },
-    { id: 'apis', name: 'API Status', icon: 'ri-server-line' }
+    { id: 'transactions', name: 'Transactions', icon: 'ri-exchange-line' },
+    { id: 'network', name: 'Network Status', icon: 'ri-wifi-line' }
   ];
 
   return (
@@ -66,7 +69,7 @@ export default function Dashboard() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center space-x-2 px-6 py-3 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap ${
                     activeTab === tab.id
-                      ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg'
+                      ? `bg-gradient-to-r ${tab.color || 'from-indigo-500 to-purple-600'} text-white shadow-lg`
                       : 'text-indigo-600 hover:text-indigo-800 hover:bg-white/50'
                   }`}
                 >
@@ -82,10 +85,13 @@ export default function Dashboard() {
       {/* Tab Content */}
       <div className="relative z-10">
         {activeTab === 'overview' && <OverviewTab />}
-        {activeTab === 'transactions' && <TransactionHistory />}
+        {activeTab === 'storage' && <ZeroGStorageTab />}
+        {activeTab === 'compute' && <ZeroGComputeTab />}
+        {activeTab === 'da' && <ZeroGDATab />}
+        {activeTab === 'chain' && <ZeroGChainTab />}
         {activeTab === 'oracles' && <RealTimeData />}
+        {activeTab === 'transactions' && <TransactionHistory />}
         {activeTab === 'network' && <NetworkStatus />}
-        {activeTab === 'apis' && <APIStatus />}
       </div>
     </div>
   );
@@ -138,6 +144,257 @@ function OverviewTab() {
       </div>
       
       <OracleVisualization />
+    </div>
+  );
+}
+
+// 0G Storage Component
+function ZeroGStorageTab() {
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadResult, setUploadResult] = useState<any>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleFileUpload = async () => {
+    if (!uploadFile) return;
+    
+    setIsUploading(true);
+    try {
+      const result = await ZeroGravisAPI.uploadFile(uploadFile);
+      setUploadResult(result);
+      setUploadProgress(100);
+    } catch (error) {
+      console.error('Upload failed:', error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  return (
+    <div className="container mx-auto px-6 space-y-6 pb-16">
+      <div className="bg-white/70 backdrop-blur-md border border-blue-100/50 rounded-3xl p-6">
+        <h2 className="text-2xl font-bold text-blue-900 mb-6">0G Storage - Decentralized File Storage</h2>
+        
+        <div className="grid lg:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-blue-800">Upload File to 0G Network</h3>
+            <div className="border-2 border-dashed border-blue-300 rounded-xl p-8 text-center">
+              <input 
+                type="file" 
+                onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                className="hidden" 
+                id="file-upload" 
+              />
+              <label htmlFor="file-upload" className="cursor-pointer">
+                <i className="ri-upload-cloud-line text-4xl text-blue-500 mb-4 block"></i>
+                <p className="text-blue-600">Click to select file or drag and drop</p>
+                {uploadFile && <p className="mt-2 text-sm text-blue-800">{uploadFile.name}</p>}
+              </label>
+            </div>
+            
+            {uploadFile && (
+              <button 
+                onClick={handleFileUpload}
+                disabled={isUploading}
+                className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 text-white py-3 rounded-xl hover:shadow-lg transition-all"
+              >
+                {isUploading ? 'Uploading...' : 'Upload to 0G Storage'}
+              </button>
+            )}
+          </div>
+          
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-blue-800">Storage Results</h3>
+            {uploadResult && (
+              <div className="bg-blue-50 rounded-xl p-4">
+                <p className="text-sm text-blue-600">Root Hash: {uploadResult.rootHash}</p>
+                <p className="text-sm text-blue-600">Status: {uploadResult.status}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// 0G Compute Component  
+function ZeroGComputeTab() {
+  const [prompt, setPrompt] = useState('');
+  const [result, setResult] = useState<any>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleInference = async () => {
+    if (!prompt.trim()) return;
+    
+    setIsProcessing(true);
+    try {
+      const response = await ZeroGravisAPI.submitInference(prompt);
+      setResult(response);
+    } catch (error) {
+      console.error('Inference failed:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div className="container mx-auto px-6 space-y-6 pb-16">
+      <div className="bg-white/70 backdrop-blur-md border border-purple-100/50 rounded-3xl p-6">
+        <h2 className="text-2xl font-bold text-purple-900 mb-6">0G Compute - AI Inference</h2>
+        
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-semibold text-purple-800 mb-3">AI Model Inference</h3>
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Enter your prompt for AI inference..."
+              className="w-full h-32 p-4 border border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+          
+          <button
+            onClick={handleInference}
+            disabled={isProcessing || !prompt.trim()}
+            className="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all disabled:opacity-50"
+          >
+            {isProcessing ? 'Processing...' : 'Run AI Inference'}
+          </button>
+          
+          {result && (
+            <div className="bg-purple-50 rounded-xl p-4 mt-4">
+              <h4 className="font-semibold text-purple-800 mb-2">AI Response:</h4>
+              <p className="text-purple-700">{result.response}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// 0G Data Availability Component
+function ZeroGDATab() {
+  const [data, setData] = useState('');
+  const [blobResult, setBlobResult] = useState<any>(null);
+  const [isPublishing, setIsPublishing] = useState(false);
+
+  const handlePublishData = async () => {
+    if (!data.trim()) return;
+    
+    setIsPublishing(true);
+    try {
+      const result = await ZeroGravisAPI.publishDataToDA(data);
+      setBlobResult(result);
+    } catch (error) {
+      console.error('Data publishing failed:', error);
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
+  return (
+    <div className="container mx-auto px-6 space-y-6 pb-16">
+      <div className="bg-white/70 backdrop-blur-md border border-green-100/50 rounded-3xl p-6">
+        <h2 className="text-2xl font-bold text-green-900 mb-6">0G Data Availability - Scalable Data Access</h2>
+        
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-semibold text-green-800 mb-3">Publish Data to DA Layer</h3>
+            <textarea
+              value={data}
+              onChange={(e) => setData(e.target.value)}
+              placeholder="Enter data to publish to 0G Data Availability layer..."
+              className="w-full h-32 p-4 border border-green-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+          
+          <button
+            onClick={handlePublishData}
+            disabled={isPublishing || !data.trim()}
+            className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all disabled:opacity-50"
+          >
+            {isPublishing ? 'Publishing...' : 'Publish to DA Layer'}
+          </button>
+          
+          {blobResult && (
+            <div className="bg-green-50 rounded-xl p-4 mt-4">
+              <h4 className="font-semibold text-green-800 mb-2">Published Successfully:</h4>
+              <p className="text-sm text-green-700">Blob ID: {blobResult.blobId}</p>
+              <p className="text-sm text-green-700">Status: {blobResult.status}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// 0G Chain Component
+function ZeroGChainTab() {
+  const [txData, setTxData] = useState('');
+  const [txResult, setTxResult] = useState<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: chainStatus } = useChainStatus();
+
+  const handleSubmitTransaction = async () => {
+    if (!txData.trim()) return;
+    
+    setIsSubmitting(true);
+    try {
+      const result = await ZeroGravisAPI.submitOracleData(txData, {}, ['chainlink']);
+      setTxResult(result);
+    } catch (error) {
+      console.error('Transaction submission failed:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="container mx-auto px-6 space-y-6 pb-16">
+      <div className="bg-white/70 backdrop-blur-md border border-orange-100/50 rounded-3xl p-6">
+        <h2 className="text-2xl font-bold text-orange-900 mb-6">0G Chain - EVM Compatible Blockchain</h2>
+        
+        <div className="grid lg:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-orange-800">Network Status</h3>
+            <div className="bg-orange-50 rounded-xl p-4 space-y-2">
+              <p className="text-sm"><span className="font-semibold">Chain ID:</span> {chainStatus?.data?.network?.chainId}</p>
+              <p className="text-sm"><span className="font-semibold">Latest Block:</span> {chainStatus?.data?.block?.latest}</p>
+              <p className="text-sm"><span className="font-semibold">Gas Price:</span> {chainStatus?.data?.gas?.gasPrice}</p>
+              <p className="text-sm"><span className="font-semibold">Wallet Balance:</span> {chainStatus?.data?.wallet?.balance} ETH</p>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-orange-800">Submit Transaction</h3>
+            <textarea
+              value={txData}
+              onChange={(e) => setTxData(e.target.value)}
+              placeholder="Enter transaction data..."
+              className="w-full h-24 p-4 border border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+            
+            <button
+              onClick={handleSubmitTransaction}
+              disabled={isSubmitting || !txData.trim()}
+              className="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-3 rounded-xl hover:shadow-lg transition-all disabled:opacity-50"
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit Transaction'}
+            </button>
+            
+            {txResult && (
+              <div className="bg-orange-50 rounded-xl p-4 mt-4">
+                <h4 className="font-semibold text-orange-800 mb-2">Transaction Result:</h4>
+                <p className="text-sm text-orange-700">Hash: {txResult.transactionHash}</p>
+                <p className="text-sm text-orange-700">Status: {txResult.status}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

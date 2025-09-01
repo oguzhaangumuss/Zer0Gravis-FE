@@ -12,6 +12,12 @@ export const QUERY_KEYS = {
   SPACE_DATA: (date: string) => ['space-data', date] as const,
   CHAIN_STATUS: ['chain-status'] as const,
   ALL_ORACLE_DATA: ['all-oracle-data'] as const,
+  RECENT_TRANSACTIONS: (limit: number, type: string) => ['recent-transactions', limit, type] as const,
+  TRANSACTION_STATS: ['transaction-stats'] as const,
+  STORAGE_INFO: ['storage-info'] as const,
+  COMPUTE_STATUS: ['compute-status'] as const,
+  DA_STATUS: ['da-status'] as const,
+  WALLET_INFO: ['wallet-info'] as const,
 };
 
 // Health Check Hook
