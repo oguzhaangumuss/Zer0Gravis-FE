@@ -196,10 +196,11 @@ export class ZeroGravisAPI {
   // 0G STORAGE APIS - Real file/dataset storage
   // ========================================
   
-  static async uploadFile(file: File, fileName?: string) {
+  static async uploadFile(file: File, fileName?: string, walletAddress?: string) {
     const formData = new FormData();
     formData.append('file', file);
     if (fileName) formData.append('fileName', fileName);
+    if (walletAddress) formData.append('walletAddress', walletAddress);
     
     const response = await apiClient.post('/api/v1/storage/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -253,12 +254,13 @@ export class ZeroGravisAPI {
   // 0G COMPUTE APIS - AI inference and model training
   // ========================================
 
-  static async submitInference(prompt: string, model?: string, maxTokens?: number, temperature?: number) {
+  static async submitInference(prompt: string, model?: string, maxTokens?: number, temperature?: number, walletAddress?: string) {
     const response = await apiClient.post('/api/v1/compute/inference', {
       prompt,
       model: model || 'llama-3.1-8b-instant',
       maxTokens: maxTokens || 200,
-      temperature: temperature || 0.7
+      temperature: temperature || 0.7,
+      walletAddress
     });
     return response.data;
   }

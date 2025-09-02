@@ -2,6 +2,7 @@
 'use client';
 
 import Link from 'next/link';
+import ConnectWallet from './ConnectWallet';
 
 export default function Header() {
   return (
@@ -44,11 +45,7 @@ export default function Header() {
               <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
               <span className="text-sm font-medium text-green-600">Live</span>
             </div>
-            <Link href="/v1/dashboard">
-              <button className="px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full hover:shadow-xl hover:shadow-purple-300/30 transition-all duration-300 whitespace-nowrap cursor-pointer transform hover:scale-105 font-semibold">
-                Get Started
-              </button>
-            </Link>
+            <ConnectWallet />
           </div>
         </div>
       </div>
