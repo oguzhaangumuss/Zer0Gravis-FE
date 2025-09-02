@@ -209,10 +209,11 @@ export class ZeroGravisAPI {
     return response.data;
   }
 
-  static async uploadData(data: any, fileName: string) {
+  static async uploadData(data: any, fileName: string, walletAddress?: string) {
     const response = await apiClient.post('/api/v1/storage/upload-data', {
       data,
-      fileName
+      fileName,
+      walletAddress
     });
     return response.data;
   }
@@ -230,8 +231,9 @@ export class ZeroGravisAPI {
     return response.data;
   }
 
-  static async getStorageInfo() {
-    const response = await apiClient.get('/api/v1/storage/info');
+  static async getStorageInfo(walletAddress?: string) {
+    const params = walletAddress ? `?walletAddress=${walletAddress}` : '';
+    const response = await apiClient.get(`/api/v1/storage/info${params}`);
     return response.data;
   }
 
@@ -245,8 +247,9 @@ export class ZeroGravisAPI {
     return response.data;
   }
 
-  static async testStorageConnection() {
-    const response = await apiClient.get('/api/v1/storage/test');
+  static async testStorageConnection(walletAddress?: string) {
+    const params = walletAddress ? `?walletAddress=${walletAddress}` : '';
+    const response = await apiClient.get(`/api/v1/storage/test${params}`);
     return response.data;
   }
 
@@ -369,6 +372,42 @@ export class ZeroGravisAPI {
 
   static async testChainConnection() {
     const response = await apiClient.get('/api/v1/chain/test');
+    return response.data;
+  }
+
+  // ========================================
+  // WALLET APIS - Wallet management and transaction preparation
+  // ========================================
+
+  static async getWalletInfo(address: string) {
+    const response = await apiClient.get(`/api/v1/wallet/info/${address}`);
+    return response.data;
+  }
+
+  static async prepareTransaction(from: string, to: string, value?: string, data?: string) {
+    const response = await apiClient.post('/api/v1/wallet/prepare-transaction', {
+      from,
+      to,
+      value,
+      data
+    });
+    return response.data;
+  }
+
+  static async broadcastTransaction(signedTransaction: string) {
+    const response = await apiClient.post('/api/v1/wallet/broadcast', {
+      signedTransaction
+    });
+    return response.data;
+  }
+
+  static async getGasPrice() {
+    const response = await apiClient.get('/api/v1/wallet/gas-price');
+    return response.data;
+  }
+
+  static async getNetworkInfo() {
+    const response = await apiClient.get('/api/v1/wallet/network');
     return response.data;
   }
 }
